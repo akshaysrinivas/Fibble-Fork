@@ -47,6 +47,7 @@ $color="navbar-dark cyan darken-3";
                     <div class="formitem">
                         <label type="text" class="formlabel"> Received Product ID </label>
                         <input type="text" class="forminput" id="prodid" onkeypress="isInputNumber(event)" required>
+                        <input type="hidden" class="forminput" id="user" value=<?php echo $_SESSION['username']; ?> required>
                         <label class=qrcode-text-btn style="width:4%;display:none;">
                             <input type=file accept="image/*" id="selectedFile" style="display:none" capture=environment onchange="openQRCamera(this);" tabindex=-1>
                         </label>
@@ -161,14 +162,17 @@ $color="navbar-dark cyan darken-3";
         event.preventDefault(); // to prevent page reload when form is submitted
         prodid = $('#prodid').val();
         prodlocation = $('#prodlocation').val();
+        username = $('#user').val(); 
         console.log(prodid);
         console.log(prodlocation);
+        console.log(username);
         var today = new Date();
         var thisdate = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        var info = "<br><br><b>Date: "+thisdate+"</b><br>Location: "+prodlocation;
+        var info = "<br><br><b>Date: "+thisdate+"</b><br>Scanned By: "+username+"</b><br>Location: "+prodlocation;
+        var final_str = prodlocation+"</b><br>Scanned By: "+username;
         console.log(info);
         web3.eth.getAccounts().then(async function(accounts) {
-          var receipt = await contract.methods.addState(prodid, thisdate, prodlocation).send({ from: accounts[0], gas: 1000000 })
+          var receipt = await contract.methods.addState(prodid, thisdate, final_str).send({ from: accounts[0], gas: 1000000 })
           .then(receipt => {
               var msg="Item has been updated ";
               $("#alertText").html(msg);
